@@ -32,5 +32,8 @@ jobs:
       - name: 抓取热搜全量并推送飞书
         env:
           FEISHU_WEBHOOK_URL: ${{ secrets.FEISHU_WEBHOOK_URL }}
+          FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID }}
+          FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
+          FEISHU_CHAT_ID: ${{ secrets.FEISHU_CHAT_ID }}
           HOT_TRENDS_LIMIT: '10'
         run: python push_hot_trends.py --hot-trends
