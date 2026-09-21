@@ -1,0 +1,36 @@
+name: 每日热搜看板-早间全量
+
+on:
+  schedule:
+    # 北京时间 07:00 = UTC 23:00（前一天）
+    - cron: '0 23 * * *'
+  workflow_dispatch:
+
+jobs:
+  push-hot-trends:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 获取北京时间日期
+        id: beijing-date
+        run: echo "date=$(TZ=Asia/Shanghai date +%Y%m%d)" >> $GITHUB_OUTPUT
+
+      - name: 恢复/创建当日状态缓存
+        uses: actions/cache@v4
+        with:
+          path: hot_trends_state.json
+          key: hot-trends-state-${{ steps.beijing-date.outputs.date }}
+          enableCrossOsArchive: true
+
+      - name: 抓取热搜全量并推送飞书
+        env:
+          FEISHU_WEBHOOK_URL: ${{ secrets.FEISHU_WEBHOOK_URL }}
+          HOT_TRENDS_LIMIT: '10'
+        run: python push_hot_trends.py --hot-trends
