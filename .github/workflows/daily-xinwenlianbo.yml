@@ -18,6 +18,17 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: 调试：确认脚本版本和环境变量
+        run: |
+          echo "=== 脚本中的错误提示 ===" && grep "请设置" push_hot_trends.py || echo "未找到"
+          echo "=== FEISHU_APP_ID 是否为空 ===" && [ -n "$FEISHU_APP_ID" ] && echo "已设置" || echo "为空"
+          echo "=== FEISHU_APP_SECRET 是否为空 ===" && [ -n "$FEISHU_APP_SECRET" ] && echo "已设置" || echo "为空"
+          echo "=== FEISHU_CHAT_ID 是否为空 ===" && [ -n "$FEISHU_CHAT_ID" ] && echo "已设置" || echo "为空"
+        env:
+          FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID }}
+          FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
+          FEISHU_CHAT_ID: ${{ secrets.FEISHU_CHAT_ID }}
+
       - name: 抓取新闻联播并推送飞书
         env:
           FEISHU_WEBHOOK_URL: ${{ secrets.FEISHU_WEBHOOK_URL }}
